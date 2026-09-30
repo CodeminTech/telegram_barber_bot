@@ -1,0 +1,6 @@
+.dart_tool/
+build/
+.vscode/
+.idea/
+.env
+*.secret
