@@ -1,96 +1,462 @@
-# Telegram Barber Booking MVP — Dart
+# 💈 Telegram Barber Bot
 
-این پروژه یک Telegram Bot واقعی و تستی برای رزرو نوبت آرایشگاه است.
-هیچ UI جداگانه یا Mini App ندارد؛ رابط کاربری با پیام‌ها و Inline Keyboard خود Telegram ساخته شده است.
+A lightweight Telegram-based barber booking system built with **Dart** and the **Telegram Bot API**, designed to simplify appointment booking directly inside Telegram.
 
-## امکانات
+The bot allows customers to browse available services, select a date and time, choose an available barber, confirm their appointment, and view their existing bookings — all through Telegram's inline keyboard interface.
 
-- `/start` و منوی اصلی
-- انتخاب خدمت
-- انتخاب تاریخ
-- نمایش Slotهای زمانی
-- انتخاب خودکار آرایشگر مجاز
-- جلوگیری از رزرو همزمان یک آرایشگر در یک تاریخ/ساعت
-- تأیید رزرو
-- مشاهده رزروهای کاربر با `/bookings`
-- لغو فرآیند با `/cancel`
-- داده‌ها فعلاً در RAM هستند و با خاموش شدن برنامه پاک می‌شوند
-- بدون Supabase و بدون دیتابیس برای تست اولیه
+---
 
-## 1) ساخت ربات در Telegram
+## ✨ Features
 
-داخل Telegram برو به `@BotFather` و `/newbot` را بفرست.
-نام و username ربات را انتخاب کن. BotFather یک Token می‌دهد؛ Token را خصوصی نگه دار.
+### 📅 Appointment Booking
 
-## 2) اجرای پروژه
+* 📅 Book barber appointments directly through Telegram
+* 💇 Select available barber services
+* 📆 Choose an appointment date
+* 🕐 Select an available time slot
+* 👤 Automatically find available barbers
+* 🧾 Review booking details before confirmation
+* ✅ Confirm appointments
+* ⚠️ Prevent double booking for the same barber and time
 
-در VS Code ترمینال را داخل همین پوشه باز کن:
+### 💇 Barber Services
+
+* ✂️ Haircut
+* 🧔 Beard trim
+* 💈 Haircut + Beard
+* ⏱️ Service duration management
+* 👤 Barber service availability
+
+### 👥 User Sessions
+
+* 🧠 Temporary session management
+* 🔄 Track the user's current booking process
+* 📌 Store selected service, date, time, and barber
+* ❌ Cancel an active booking process
+
+### 📋 My Bookings
+
+* 📋 View personal bookings
+* 👤 Display assigned barber
+* 💇 Display selected service
+* 📆 Display appointment date
+* 🕐 Display appointment time
+
+### 🤖 Telegram Bot
+
+* 🤖 Telegram Bot API integration
+* 💬 Telegram message handling
+* 🔘 Inline keyboard navigation
+* 🔄 Callback query handling
+* ✏️ Dynamic message editing
+* 📡 Long polling update handling
+* ⚠️ Telegram API error handling
+
+### 🎨 User Experience
+
+* 📱 Fully Telegram-based interface
+* 🔘 Interactive inline keyboards
+* 🟢 Available time slots
+* 🔴 Unavailable time slots
+* ✅ Booking confirmation screens
+* ℹ️ Built-in help section
+* ❌ Booking cancellation
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology           | Usage                             |
+| -------------------- | --------------------------------- |
+| 🎯 Dart              | Programming language              |
+| 🤖 Telegram Bot API  | Bot communication and messaging   |
+| 🌐 HTTP              | HTTP requests to Telegram API     |
+| 🔄 Long Polling      | Receiving Telegram updates        |
+| 🧠 In-Memory Storage | Temporary bookings and sessions   |
+| 📦 JSON              | API request and response handling |
+
+---
+
+## 🏗️ Architecture
+
+The project follows a lightweight service-oriented structure suitable for a Telegram bot MVP.
+
+```text
+telegram_barber_bot/
+│
+├── bin/
+│   └── telegram_barber_bot.dart
+│
+├── screenshots/
+│   ├── main-menu.png
+│   ├── services.png
+│   └── booking.png
+│
+├── pubspec.yaml
+├── pubspec.lock
+└── README.md
+```
+
+---
+
+## 🧩 Main Components
+
+### 🤖 Telegram API
+
+Handles communication with Telegram using the Bot API.
+
+The bot communicates with Telegram through methods such as:
+
+```text
+getUpdates
+sendMessage
+editMessageText
+answerCallbackQuery
+```
+
+---
+
+### 📅 Booking System
+
+The booking flow is handled through a sequence of user selections:
+
+```text
+🏠 Main Menu
+      ↓
+📅 Book Appointment
+      ↓
+💇 Select Service
+      ↓
+📆 Select Date
+      ↓
+🕐 Select Time
+      ↓
+👤 Select Barber
+      ↓
+🧾 Booking Summary
+      ↓
+✅ Confirm Booking
+```
+
+---
+
+### 👤 Staff Management
+
+Each barber has a list of services they can provide.
+
+Example:
+
+```dart
+const StaffItem(
+  'ali',
+  'Ali',
+  {'haircut', 'beard', 'combo'},
+);
+```
+
+The system checks staff availability based on:
+
+* 💇 Selected service
+* 📆 Selected date
+* 🕐 Selected time
+* 📋 Existing bookings
+
+---
+
+### 🧠 Session Management
+
+Each Telegram user has a temporary session:
+
+```dart
+class UserSession {
+  String? vendorId;
+  String? serviceId;
+  String? date;
+  String? time;
+  String? staffId;
+}
+```
+
+This allows the bot to maintain the user's progress throughout the booking process.
+
+---
+
+## 🗃️ Data Models
+
+The project currently uses three main data structures.
+
+### 💇 ServiceItem
+
+Represents a barber service.
+
+```text
+ID
+Name
+Duration
+```
+
+### 👤 StaffItem
+
+Represents a barber and the services they provide.
+
+```text
+ID
+Name
+Service IDs
+```
+
+### 📅 Booking
+
+Represents a customer appointment.
+
+```text
+User ID
+Username
+Vendor ID
+Service ID
+Staff ID
+Date
+Time
+```
+
+---
+
+## 🖼️ Screenshots
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center">
+<img src="screenshots/main-menu.png" width="220"/>
+</td>
+<td align="center">
+<img src="screenshots/services.png" width="220"/>
+</td>
+<td align="center">
+<img src="screenshots/booking.png" width="220"/>
+</td>
+</tr>
+<tr>
+<td>🏠 Main Menu</td>
+<td>💇 Services</td>
+<td>📅 Booking</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/MobinaFetrati/telegram_barber_bot.git
+```
+
+### 2️⃣ Navigate to the project
+
+```bash
+cd telegram_barber_bot
+```
+
+### 3️⃣ Install dependencies
 
 ```bash
 dart pub get
-dart run -DBOT_TOKEN=YOUR_BOT_TOKEN
 ```
 
-مثال:
+### 4️⃣ Create a Telegram Bot
+
+Open **BotFather** in Telegram and create a new bot.
+
+Copy the generated Bot Token.
+
+⚠️ Never publish your Bot Token in the repository.
+
+### 5️⃣ Run the bot
 
 ```bash
-dart run -DBOT_TOKEN=123456:ABCDEF...
+dart run -DBOT_TOKEN="YOUR_BOT_TOKEN"
 ```
 
-بعد داخل Telegram ربات را باز کن و `/start` بفرست.
-
-## 3) اگر Dart نصب نیست
-
-Flutter SDK معمولاً Dart را هم همراه خود دارد. می‌توانی در ترمینال بررسی کنی:
+Example:
 
 ```bash
-dart --version
-flutter --version
+dart run -DBOT_TOKEN="123456789:YOUR_BOT_TOKEN"
 ```
 
-برای این Bot به Flutter UI نیاز نیست؛ خود Dart برای Backend/Telegram Bot کافی است.
+---
 
-## 4) ساختار
+## 🔐 Environment Configuration
+
+The Telegram Bot Token is provided through Dart's compile-time environment variables:
+
+```dart
+const botToken = String.fromEnvironment('BOT_TOKEN');
+```
+
+The application checks whether the token is available before starting:
 
 ```text
-telegram_barber_bot_mvp/
-  bin/
-    bot.dart
-  pubspec.yaml
-  README.md
-  .gitignore
+BOT_TOKEN is missing.
 ```
 
-## 5) نسخه فعلی تستی
+This approach keeps the token outside the source code.
 
-داده‌های زیر داخل کد هستند:
+⚠️ If a real Bot Token has accidentally been committed to GitHub, revoke it and generate a new one through BotFather.
 
-- یک آرایشگاه نمونه
-- 3 خدمت
-- 3 آرایشگر
-- ساعت‌های نمونه از 10 تا 20
+---
 
-هر رزرو در حافظه برنامه ذخیره می‌شود. با خاموش/ری‌استارت کردن Bot، رزروها پاک می‌شوند.
+## 💾 Data Storage
 
-## 6) مرحله بعد برای نسخه واقعی
+The current version uses **in-memory storage** for bookings and user sessions.
 
-بعداً Supabase را اضافه کن:
+```dart
+final bookings = <Booking>[];
 
-- `vendors`
-- `staff`
-- `services`
-- `staff_services`
-- `bookings`
-- `booking_holds`
+final sessions = <int, UserSession>{};
+```
 
-و بهتر است منطق اصلی رزرو در Backend/Core قرار بگیرد؛ Bot فقط رابط Telegram باشد.
+This makes the current version suitable for:
 
-برای جلوگیری قطعی از Double Booking، در نسخه Production باید کنترل همزمانی در PostgreSQL/Supabase انجام شود، نه فقط داخل این کد.
+* 🧪 MVP development
+* 🎯 Prototyping
+* 🧑‍💻 Development
+* 🎓 Demonstration
 
-## 7) Reminder
+However, all booking data will be lost when the application stops or restarts.
 
-برای ارسال یادآوری مثلاً 30 دقیقه قبل از نوبت، یک Job زمان‌بندی‌شده در Backend لازم است که Telegram Bot API یعنی `sendMessage` را صدا بزند.
+---
 
-## امنیت
+## 📊 Availability System
 
-Token ربات را داخل GitHub یا فایل عمومی قرار نده. برای Production از Secret/Environment Variable استفاده کن.
+The bot dynamically checks barber availability before displaying time slots.
+
+```text
+Selected Service
+       ↓
+Selected Date
+       ↓
+Selected Time
+       ↓
+Available Barbers
+       ↓
+🟢 Available
+   or
+🔴 Unavailable
+```
+
+A time slot becomes unavailable when all eligible barbers are already booked for that specific date and time.
+
+---
+
+## 🤖 Bot Commands
+
+| Command     | Description                          |
+| ----------- | ------------------------------------ |
+| `/start`    | 🚀 Start the bot                     |
+| `/menu`     | 🏠 Open the main menu                |
+| `/bookings` | 📋 View personal bookings            |
+| `/cancel`   | ❌ Cancel the current booking process |
+
+---
+
+## 🎯 Project Goals
+
+This project was developed to demonstrate practical experience with:
+
+* 🎯 Dart development
+* 🤖 Telegram Bot API integration
+* 🌐 REST API communication
+* 🔄 Long polling
+* 🔘 Telegram inline keyboards
+* 🧠 Session management
+* 📅 Appointment booking logic
+* ⚠️ Availability and conflict handling
+* 🧩 Building a real-world Telegram automation MVP
+
+---
+
+## 🔮 Future Improvements
+
+The current MVP can be extended with additional features such as:
+
+* 🗄️ Persistent database storage
+* ☁️ Supabase integration
+* 👨‍💼 Admin management panel
+* 👤 Customer management
+* 👨‍🔧 Barber management
+* 📆 Full calendar system
+* 🔔 Appointment reminders
+* ❌ Appointment cancellation
+* 🔄 Appointment rescheduling
+* 💳 Online payment
+* 📊 Booking statistics
+* 🏪 Multi-barber-shop support
+* 🌐 Web-based management dashboard
+* ☁️ Cloud deployment
+
+---
+
+## 📈 Possible Production Architecture
+
+The current in-memory implementation can later be evolved into a production-ready system:
+
+```text
+                    ┌──────────────────┐
+                    │     Telegram     │
+                    │      Client      │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │   Dart Bot API   │
+                    │     Backend      │
+                    └────────┬─────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+        👤 Customers      📅 Bookings    💇 Staff
+              │              │              │
+              └──────────────┼──────────────┘
+                             ▼
+                    ┌──────────────────┐
+                    │     Database     │
+                    └──────────────────┘
+```
+
+---
+
+## 👩‍💻 Developer
+
+**Mobina Fetrati**
+
+💙 Dart & Flutter Developer
+
+🐙 GitHub:
+https://github.com/MobinaFetrati
+
+---
+
+## ⭐ Support
+
+If you find this project useful or interesting, consider giving the repository a ⭐ on GitHub.
+
+```text
+💈 Barber Shop
+      +
+🤖 Telegram Bot
+      +
+🎯 Dart
+      =
+📅 Simple Booking System
+```
+
+---
+
+## 📄 License
+
+This project is currently developed for **portfolio, educational, and demonstration purposes**.
