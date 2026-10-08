@@ -253,7 +253,7 @@ Time
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/MobinaFetrati/telegram_barber_bot.git
+git clone https://github.com/CodeminTech/telegram_barber_bot.git
 ```
 
 ### 2️⃣ Navigate to the project
@@ -432,31 +432,9 @@ The current in-memory implementation can later be evolved into a production-read
 
 ## 👩‍💻 Developer
 
-**Mobina Fetrati**
+**CodemonTech**
 
-💙 Dart & Flutter Developer
+Flutter Developer | Mobile Application Developer
 
-🐙 GitHub:
-https://github.com/MobinaFetrati
-
----
-
-## ⭐ Support
-
-If you find this project useful or interesting, consider giving the repository a ⭐ on GitHub.
-
-```text
-💈 Barber Shop
-      +
-🤖 Telegram Bot
-      +
-🎯 Dart
-      =
-📅 Simple Booking System
-```
-
----
-
-## 📄 License
-
-This project is currently developed for **portfolio, educational, and demonstration purposes**.
+🔗 GitHub:
+GitHub: https://github.com/CodeminTech
